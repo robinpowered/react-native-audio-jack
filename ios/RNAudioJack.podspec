@@ -1,4 +1,3 @@
-
 Pod::Spec.new do |s|
   s.name         = "RNAudioJack"
   s.version      = "1.0.0"
@@ -20,5 +19,3 @@ Pod::Spec.new do |s|
   #s.dependency "others"
 
 end
-
-  

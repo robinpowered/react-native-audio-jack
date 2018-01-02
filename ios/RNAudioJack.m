@@ -1,4 +1,3 @@
-
 #import "RNAudioJack.h"
 
 @implementation RNAudioJack
@@ -10,4 +9,3 @@
 RCT_EXPORT_MODULE()
 
 @end
-  
