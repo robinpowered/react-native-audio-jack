@@ -21,18 +21,20 @@ import android.media.AudioDeviceInfo;
 public class RNAudioJackModule extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = "RNAudioJack";
     private static final String AUDIO_CHANGED_NOTIFICATION = "AUDIO_CHANGED_NOTIFICATION";
+    private static final String IS_AUDIO_JACK_PLUGGED_IN = "isAudioJackPluggedIn";
 
     public RNAudioJackModule(final ReactApplicationContext reactContext) {
         super(reactContext);
 
-        IntentFilter headphonesFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
-        BroadcastReceiver headphonesReceiver = new BroadcastReceiver() {
+        IntentFilter headsetFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+
+        BroadcastReceiver headsetReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int pluggedInState = intent.getIntExtra("state", -1);
 
                 WritableNativeMap data = new WritableNativeMap();
-                data.putBoolean("audioJackPluggedIn", pluggedInState == 1);
+                data.putBoolean(IS_AUDIO_JACK_PLUGGED_IN, pluggedInState == 1);
 
                 if (reactContext.hasActiveCatalystInstance()) {
                     reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(AUDIO_CHANGED_NOTIFICATION,
@@ -40,11 +42,13 @@ public class RNAudioJackModule extends ReactContextBaseJavaModule {
                 }
             }
         };
-        reactContext.registerReceiver(headphonesReceiver, headphonesFilter);
+
+        reactContext.registerReceiver(headsetReceiver, headsetFilter);
     }
 
-    private boolean isHeadSetPluggedIn() {
+    private boolean isHeadsetPluggedIn() {
         AudioManager audioManager = (AudioManager) getReactApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return audioManager.isWiredHeadsetOn();
         } else {
@@ -56,6 +60,7 @@ public class RNAudioJackModule extends ReactContextBaseJavaModule {
                 }
             }
         }
+
         return false;
     }
 
@@ -73,6 +78,6 @@ public class RNAudioJackModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void isAudioJackPluggedIn(final Promise promise) {
-        promise.resolve(isHeadSetPluggedIn());
+        promise.resolve(isHeadsetPluggedIn());
     }
 }

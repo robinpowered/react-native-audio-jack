@@ -3,17 +3,12 @@
 // Used to send events to JS
 #if __has_include(<React/RCTBridge.h>)
 #import <React/RCTBridge.h>
+#import <React/RCTEventDispatcher.h>
 #elif __has_include("RCTBridge.h")
 #import "RCTBridge.h"
-#else
-#import "React/RCTBridge.h"
-#endif
-
-#if __has_include(<React/RCTEventDispatcher.h>)
-#import <React/RCTEventDispatcher.h>
-#elif __has_include("RCTEventDispatcher.h")
 #import "RCTEventDispatcher.h"
 #else
+#import "React/RCTBridge.h"
 #import "React/RCTEventDispatcher.h"
 #endif
 
@@ -22,6 +17,7 @@
 @synthesize bridge = _bridge;
 
 static NSString * const AUDIO_CHANGED_NOTIFICATION = @"AUDIO_CHANGED_NOTIFICATION";
+static NSString * const IS_AUDIO_JACK_PLUGGED_IN = @"isAudioJackPluggedIn";
 
 - (instancetype)init
 {
@@ -41,17 +37,18 @@ static NSString * const AUDIO_CHANGED_NOTIFICATION = @"AUDIO_CHANGED_NOTIFICATIO
 {
     [_bridge.eventDispatcher sendDeviceEventWithName:AUDIO_CHANGED_NOTIFICATION
       body:(@{
-        @"audioJackPluggedIn": @([RNFrequency isAudioJackInUse])
+          IS_AUDIO_JACK_PLUGGED_IN: @([RNFrequency isAudioJackInUse])
       })];
 }
 
-+ (BOOL) isAudioJackInUse
++ (BOOL)isAudioJackInUse
 {
     AVAudioSessionRouteDescription* route = [[AVAudioSession sharedInstance] currentRoute];
 
     for (AVAudioSessionPortDescription* desc in [route outputs]) {
-        if ([[desc portType] isEqualToString:AVAudioSessionPortHeadphones])
+        if ([[desc portType] isEqualToString:AVAudioSessionPortHeadphones]) {
             return YES;
+        }
     }
 
     return NO;
