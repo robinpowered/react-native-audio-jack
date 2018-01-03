@@ -22,8 +22,6 @@ public class RNAudioJackModule extends ReactContextBaseJavaModule {
     private static final String MODULE_NAME = "RNAudioJack";
     private static final String AUDIO_CHANGED_NOTIFICATION = "AUDIO_CHANGED_NOTIFICATION";
 
-    private final ReactApplicationContext reactContext;
-
     public RNAudioJackModule(final ReactApplicationContext reactContext) {
         super(reactContext);
 
