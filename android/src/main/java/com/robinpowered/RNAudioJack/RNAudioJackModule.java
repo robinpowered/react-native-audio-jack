@@ -17,67 +17,68 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.media.AudioDeviceInfo;
+import android.media.AudioManager;
 
 public class RNAudioJackModule extends ReactContextBaseJavaModule {
-    private static final String MODULE_NAME = "RNAudioJack";
-    private static final String AUDIO_CHANGED_NOTIFICATION = "AUDIO_CHANGED_NOTIFICATION";
-    private static final String IS_AUDIO_JACK_PLUGGED_IN = "isAudioJackPluggedIn";
+  private static final String MODULE_NAME = "RNAudioJack";
+  private static final String AUDIO_CHANGED_NOTIFICATION = "AUDIO_CHANGED_NOTIFICATION";
+  private static final String IS_AUDIO_JACK_PLUGGED_IN = "isAudioJackPluggedIn";
 
-    public RNAudioJackModule(final ReactApplicationContext reactContext) {
-        super(reactContext);
+  public RNAudioJackModule(final ReactApplicationContext reactContext) {
+    super(reactContext);
 
-        IntentFilter headsetFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+    IntentFilter headsetFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
 
-        BroadcastReceiver headsetReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                int pluggedInState = intent.getIntExtra("state", -1);
+    BroadcastReceiver headsetReceiver = new BroadcastReceiver() {
+      @Override
+      public void onReceive(Context context, Intent intent) {
+        int pluggedInState = intent.getIntExtra("state", -1);
 
-                WritableNativeMap data = new WritableNativeMap();
-                data.putBoolean(IS_AUDIO_JACK_PLUGGED_IN, pluggedInState == 1);
+        WritableNativeMap data = new WritableNativeMap();
+        data.putBoolean(IS_AUDIO_JACK_PLUGGED_IN, pluggedInState == 1);
 
-                if (reactContext.hasActiveCatalystInstance()) {
-                    reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(AUDIO_CHANGED_NOTIFICATION,
-                        data);
-                }
-            }
-        };
-
-        reactContext.registerReceiver(headsetReceiver, headsetFilter);
-    }
-
-    private boolean isHeadsetPluggedIn() {
-        AudioManager audioManager = (AudioManager) getReactApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return audioManager.isWiredHeadsetOn();
-        } else {
-            AudioDeviceInfo[] devices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS);
-            for (int i = 0; i < devices.length; i++) {
-                AudioDeviceInfo device = devices[i];
-                if (device.getType() == AudioDeviceInfo.TYPE_WIRED_HEADPHONES) {
-                    return true;
-                }
-            }
+        if (reactContext.hasActiveCatalystInstance()) {
+          reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+              .emit(AUDIO_CHANGED_NOTIFICATION, data);
         }
+      }
+    };
 
-        return false;
+    reactContext.registerReceiver(headsetReceiver, headsetFilter);
+  }
+
+  private boolean isHeadsetPluggedIn() {
+    AudioManager audioManager = (AudioManager) getReactApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      return audioManager.isWiredHeadsetOn();
+    } else {
+      AudioDeviceInfo[] devices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS);
+      for (int i = 0; i < devices.length; i++) {
+        AudioDeviceInfo device = devices[i];
+        if (device.getType() == AudioDeviceInfo.TYPE_WIRED_HEADPHONES) {
+          return true;
+        }
+      }
     }
 
-    @Override
-    public @Nullable Map<String, Object> getConstants() {
-        HashMap<String, Object> constants = new HashMap<>();
-        constants.put(AUDIO_CHANGED_NOTIFICATION, AUDIO_CHANGED_NOTIFICATION);
-        return constants;
-    }
+    return false;
+  }
 
-    @Override
-    public String getName() {
-        return MODULE_NAME;
-    }
+  @Override
+  public @Nullable Map<String, Object> getConstants() {
+    HashMap<String, Object> constants = new HashMap<>();
+    constants.put(AUDIO_CHANGED_NOTIFICATION, AUDIO_CHANGED_NOTIFICATION);
+    return constants;
+  }
 
-    @ReactMethod
-    public void isAudioJackPluggedIn(final Promise promise) {
-        promise.resolve(isHeadsetPluggedIn());
-    }
+  @Override
+  public String getName() {
+    return MODULE_NAME;
+  }
+
+  @ReactMethod
+  public void isAudioJackPluggedIn(final Promise promise) {
+    promise.resolve(isHeadsetPluggedIn());
+  }
 }
