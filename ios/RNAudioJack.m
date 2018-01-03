@@ -1,4 +1,5 @@
 #import "RNAudioJack.h"
+#import <AVFoundation/AVFoundation.h>
 
 // Used to send events to JS
 #if __has_include(<React/RCTBridge.h>)
@@ -37,7 +38,7 @@ static NSString * const IS_AUDIO_JACK_PLUGGED_IN = @"isAudioJackPluggedIn";
 {
     [_bridge.eventDispatcher sendDeviceEventWithName:AUDIO_CHANGED_NOTIFICATION
       body:(@{
-          IS_AUDIO_JACK_PLUGGED_IN: @([RNFrequency isAudioJackInUse])
+          IS_AUDIO_JACK_PLUGGED_IN: @([RNAudioJack isAudioJackInUse])
       })];
 }
 
@@ -69,7 +70,7 @@ RCT_EXPORT_MODULE()
 RCT_EXPORT_METHOD(isAudioJackPluggedIn:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
-    resolve(@([RNFrequency isAudioJackInUse]));
+    resolve(@([RNAudioJack isAudioJackInUse]));
 }
 
 @end
