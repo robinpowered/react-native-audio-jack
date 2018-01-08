@@ -18,7 +18,7 @@
 @synthesize bridge = _bridge;
 
 static NSString * const AUDIO_CHANGED_NOTIFICATION = @"AUDIO_CHANGED_NOTIFICATION";
-static NSString * const IS_AUDIO_JACK_PLUGGED_IN = @"isAudioJackPluggedIn";
+static NSString * const IS_PLUGGED_IN = @"isPluggedIn";
 
 - (instancetype)init
 {
@@ -38,7 +38,7 @@ static NSString * const IS_AUDIO_JACK_PLUGGED_IN = @"isAudioJackPluggedIn";
 {
     [_bridge.eventDispatcher sendDeviceEventWithName:AUDIO_CHANGED_NOTIFICATION
       body:(@{
-          IS_AUDIO_JACK_PLUGGED_IN: @([RNAudioJack isAudioJackInUse])
+          IS_PLUGGED_IN: @([RNAudioJack isAudioJackInUse])
       })];
 }
 

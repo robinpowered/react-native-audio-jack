@@ -22,7 +22,7 @@ import android.media.AudioManager;
 public class RNAudioJackModule extends ReactContextBaseJavaModule {
   private static final String MODULE_NAME = "AudioJack";
   private static final String AUDIO_CHANGED_NOTIFICATION = "AUDIO_CHANGED_NOTIFICATION";
-  private static final String IS_AUDIO_JACK_PLUGGED_IN = "isAudioJackPluggedIn";
+  private static final String IS_PLUGGED_IN = "isPluggedIn";
 
   public RNAudioJackModule(final ReactApplicationContext reactContext) {
     super(reactContext);
@@ -35,7 +35,7 @@ public class RNAudioJackModule extends ReactContextBaseJavaModule {
         int pluggedInState = intent.getIntExtra("state", -1);
 
         WritableNativeMap data = new WritableNativeMap();
-        data.putBoolean(IS_AUDIO_JACK_PLUGGED_IN, pluggedInState == 1);
+        data.putBoolean(IS_PLUGGED_IN, pluggedInState == 1);
 
         if (reactContext.hasActiveCatalystInstance()) {
           reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
