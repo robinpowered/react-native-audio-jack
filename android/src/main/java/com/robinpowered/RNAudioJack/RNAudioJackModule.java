@@ -20,7 +20,7 @@ import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 
 public class RNAudioJackModule extends ReactContextBaseJavaModule {
-  private static final String MODULE_NAME = "RNAudioJack";
+  private static final String MODULE_NAME = "AudioJack";
   private static final String AUDIO_CHANGED_NOTIFICATION = "AUDIO_CHANGED_NOTIFICATION";
   private static final String IS_AUDIO_JACK_PLUGGED_IN = "isAudioJackPluggedIn";
 
@@ -78,7 +78,7 @@ public class RNAudioJackModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void isAudioJackPluggedIn(final Promise promise) {
+  public void isPluggedIn(final Promise promise) {
     promise.resolve(isHeadsetPluggedIn());
   }
 }

@@ -60,14 +60,14 @@ static NSString * const IS_AUDIO_JACK_PLUGGED_IN = @"isAudioJackPluggedIn";
     return dispatch_get_main_queue();
 }
 
-RCT_EXPORT_MODULE()
+RCT_EXPORT_MODULE(@"AudioJack")
 
 - (NSDictionary *)constantsToExport
 {
     return @{ @"AUDIO_CHANGED_NOTIFICATION": AUDIO_CHANGED_NOTIFICATION };
 }
 
-RCT_EXPORT_METHOD(isAudioJackPluggedIn:(RCTPromiseResolveBlock)resolve
+RCT_EXPORT_METHOD(isPluggedIn:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     resolve(@([RNAudioJack isAudioJackInUse]));
