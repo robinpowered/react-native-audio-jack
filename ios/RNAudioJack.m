@@ -15,7 +15,7 @@
 
 @implementation RNAudioJack
 
-RCT_EXPORT_MODULE(@"AudioJack")
+RCT_EXPORT_MODULE(AudioJack)
 
 @synthesize bridge = _bridge;
 
