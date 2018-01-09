@@ -15,6 +15,8 @@
 
 @implementation RNAudioJack
 
+RCT_EXPORT_MODULE(@"AudioJack")
+
 @synthesize bridge = _bridge;
 
 static NSString * const AUDIO_CHANGED_NOTIFICATION = @"AUDIO_CHANGED_NOTIFICATION";
@@ -59,8 +61,6 @@ static NSString * const IS_PLUGGED_IN = @"isPluggedIn";
 {
     return dispatch_get_main_queue();
 }
-
-RCT_EXPORT_MODULE(@"AudioJack")
 
 - (NSDictionary *)constantsToExport
 {

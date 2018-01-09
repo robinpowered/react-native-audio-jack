@@ -1,4 +1,4 @@
-package com.robinpowered.RNAudioJack;
+package com.robinpowered.AudioJack;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -19,12 +19,12 @@ import android.os.Build;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 
-public class RNAudioJackModule extends ReactContextBaseJavaModule {
+public class AudioJackModule extends ReactContextBaseJavaModule {
   private static final String MODULE_NAME = "AudioJack";
   private static final String AUDIO_CHANGED_NOTIFICATION = "AUDIO_CHANGED_NOTIFICATION";
   private static final String IS_PLUGGED_IN = "isPluggedIn";
 
-  public RNAudioJackModule(final ReactApplicationContext reactContext) {
+  public AudioJackModule(final ReactApplicationContext reactContext) {
     super(reactContext);
 
     IntentFilter headsetFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
