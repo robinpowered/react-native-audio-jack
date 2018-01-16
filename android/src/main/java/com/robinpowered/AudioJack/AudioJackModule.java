@@ -1,5 +1,6 @@
 package com.robinpowered.AudioJack;
 
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
@@ -19,66 +20,104 @@ import android.os.Build;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 
-public class AudioJackModule extends ReactContextBaseJavaModule {
-  private static final String MODULE_NAME = "AudioJack";
-  private static final String AUDIO_CHANGED_NOTIFICATION = "AUDIO_CHANGED_NOTIFICATION";
-  private static final String IS_PLUGGED_IN = "isPluggedIn";
+public class RNAudioJackModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
+    private static final String MODULE_NAME = "RNAudioJack";
+    private static final String AUDIO_CHANGED_NOTIFICATION = "AUDIO_CHANGED_NOTIFICATION";
+    private static final String IS_AUDIO_JACK_PLUGGED_IN = "isAudioJackPluggedIn";
 
-  public AudioJackModule(final ReactApplicationContext reactContext) {
-    super(reactContext);
+    private BroadcastReceiver headsetReceiver;
 
-    IntentFilter headsetFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
-
-    BroadcastReceiver headsetReceiver = new BroadcastReceiver() {
-      @Override
-      public void onReceive(Context context, Intent intent) {
-        int pluggedInState = intent.getIntExtra("state", -1);
-
-        WritableNativeMap data = new WritableNativeMap();
-        data.putBoolean(IS_PLUGGED_IN, pluggedInState == 1);
-
-        if (reactContext.hasActiveCatalystInstance()) {
-          reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-              .emit(AUDIO_CHANGED_NOTIFICATION, data);
-        }
-      }
-    };
-
-    reactContext.registerReceiver(headsetReceiver, headsetFilter);
-  }
-
-  private boolean isHeadsetPluggedIn() {
-    AudioManager audioManager = (AudioManager) getReactApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-      return audioManager.isWiredHeadsetOn();
-    } else {
-      AudioDeviceInfo[] devices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS);
-      for (int i = 0; i < devices.length; i++) {
-        AudioDeviceInfo device = devices[i];
-        if (device.getType() == AudioDeviceInfo.TYPE_WIRED_HEADPHONES) {
-          return true;
-        }
-      }
+    public RNAudioJackModule(final ReactApplicationContext reactContext) {
+        super(reactContext);
     }
 
-    return false;
-  }
+    private void maybeRegisterReceiver() {
+        final ReactApplicationContext reactContext = getReactApplicationContext();
 
-  @Override
-  public @Nullable Map<String, Object> getConstants() {
-    HashMap<String, Object> constants = new HashMap<>();
-    constants.put(AUDIO_CHANGED_NOTIFICATION, AUDIO_CHANGED_NOTIFICATION);
-    return constants;
-  }
+        if (headsetReceiver != null) {
+            return;
+        }
 
-  @Override
-  public String getName() {
-    return MODULE_NAME;
-  }
+        headsetReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int pluggedInState = intent.getIntExtra("state", -1);
 
-  @ReactMethod
-  public void isPluggedIn(final Promise promise) {
-    promise.resolve(isHeadsetPluggedIn());
-  }
+                WritableNativeMap data = new WritableNativeMap();
+                data.putBoolean(IS_AUDIO_JACK_PLUGGED_IN, pluggedInState == 1);
+
+                if (reactContext.hasActiveCatalystInstance()) {
+                    reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(AUDIO_CHANGED_NOTIFICATION,
+                            data);
+                }
+            }
+        };
+
+        IntentFilter headsetFilter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
+        reactContext.registerReceiver(headsetReceiver, headsetFilter);
+    }
+
+    private void maybeUnregisterReceiver() {
+        if (headsetReceiver == null) {
+            return;
+        }
+        getReactApplicationContext().unregisterReceiver(headsetReceiver);
+        headsetReceiver = null;
+    }
+
+    private boolean isHeadsetPluggedIn() {
+        AudioManager audioManager = (AudioManager) getReactApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return audioManager.isWiredHeadsetOn();
+        } else {
+            AudioDeviceInfo[] devices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS);
+            for (int i = 0; i < devices.length; i++) {
+                AudioDeviceInfo device = devices[i];
+                if (device.getType() == AudioDeviceInfo.TYPE_WIRED_HEADPHONES) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public @Nullable Map<String, Object> getConstants() {
+        HashMap<String, Object> constants = new HashMap<>();
+        constants.put(AUDIO_CHANGED_NOTIFICATION, AUDIO_CHANGED_NOTIFICATION);
+        return constants;
+    }
+
+    @Override
+    public String getName() {
+        return MODULE_NAME;
+    }
+
+    @ReactMethod
+    public void isAudioJackPluggedIn(final Promise promise) {
+        promise.resolve(isHeadsetPluggedIn());
+    }
+
+    @Override
+    public void initialize() {
+        getReactApplicationContext().addLifecycleEventListener(this);
+        maybeRegisterReceiver();
+    }
+
+    @Override
+    public void onHostResume() {
+        maybeRegisterReceiver();
+    }
+
+    @Override
+    public void onHostPause() {
+        maybeUnregisterReceiver();
+    }
+
+    @Override
+    public void onHostDestroy() {
+        maybeUnregisterReceiver();
+    }
 }
