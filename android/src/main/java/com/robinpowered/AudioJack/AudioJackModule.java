@@ -20,14 +20,14 @@ import android.os.Build;
 import android.media.AudioDeviceInfo;
 import android.media.AudioManager;
 
-public class RNAudioJackModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
-    private static final String MODULE_NAME = "RNAudioJack";
+public class AudioJackModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
+    private static final String MODULE_NAME = "AudioJack";
     private static final String AUDIO_CHANGED_NOTIFICATION = "AUDIO_CHANGED_NOTIFICATION";
-    private static final String IS_AUDIO_JACK_PLUGGED_IN = "isAudioJackPluggedIn";
+    private static final String IS_PLUGGED_IN = "isPluggedIn";
 
     private BroadcastReceiver headsetReceiver;
 
-    public RNAudioJackModule(final ReactApplicationContext reactContext) {
+    public AudioJackModule(final ReactApplicationContext reactContext) {
         super(reactContext);
     }
 
@@ -44,7 +44,7 @@ public class RNAudioJackModule extends ReactContextBaseJavaModule implements Lif
                 int pluggedInState = intent.getIntExtra("state", -1);
 
                 WritableNativeMap data = new WritableNativeMap();
-                data.putBoolean(IS_AUDIO_JACK_PLUGGED_IN, pluggedInState == 1);
+                data.putBoolean(IS_PLUGGED_IN, pluggedInState == 1);
 
                 if (reactContext.hasActiveCatalystInstance()) {
                     reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(AUDIO_CHANGED_NOTIFICATION,
@@ -96,7 +96,7 @@ public class RNAudioJackModule extends ReactContextBaseJavaModule implements Lif
     }
 
     @ReactMethod
-    public void isAudioJackPluggedIn(final Promise promise) {
+    public void isPluggedIn(final Promise promise) {
         promise.resolve(isHeadsetPluggedIn());
     }
 
