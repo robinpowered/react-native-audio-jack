@@ -1,5 +1,16 @@
-import { NativeModules } from 'react-native';
+import {
+  DeviceEventEmitter,
+  NativeModules
+} from 'react-native';
 
-const { RNAudioJack } = NativeModules;
+const {AudioJack} = NativeModules;
 
-export default RNAudioJack;
+export default {
+  ...AudioJack,
+  addListener(callback) {
+    return DeviceEventEmitter.addListener(
+      AudioJack.AUDIO_CHANGED_NOTIFICATION,
+      callback
+    );
+  }
+};

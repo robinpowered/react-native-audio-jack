@@ -1,4 +1,4 @@
-package com.robinpowered.RNAudioJack;
+package com.robinpowered.AudioJack;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -9,10 +9,11 @@ import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 import com.facebook.react.bridge.JavaScriptModule;
-public class RNAudioJackPackage implements ReactPackage {
+
+public class AudioJackPackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-      return Arrays.<NativeModule>asList(new RNAudioJackModule(reactContext));
+      return Arrays.<NativeModule>asList(new AudioJackModule(reactContext));
     }
 
     // Deprecated from RN 0.47
