@@ -22,6 +22,11 @@ RCT_EXPORT_MODULE(AudioJack)
 static NSString * const AUDIO_CHANGED_NOTIFICATION = @"AUDIO_CHANGED_NOTIFICATION";
 static NSString * const IS_PLUGGED_IN = @"isPluggedIn";
 
++ (BOOL)requiresMainQueueSetup
+{
+   return YES;
+}
+
 - (instancetype)init
 {
     if (self = [super init]) {
