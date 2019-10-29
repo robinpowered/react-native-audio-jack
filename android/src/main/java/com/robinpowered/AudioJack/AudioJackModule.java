@@ -74,8 +74,12 @@ public class AudioJackModule extends ReactContextBaseJavaModule implements Lifec
             AudioDeviceInfo[] devices = audioManager.getDevices(AudioManager.GET_DEVICES_OUTPUTS);
             for (int i = 0; i < devices.length; i++) {
                 AudioDeviceInfo device = devices[i];
-                if (device.getType() == AudioDeviceInfo.TYPE_WIRED_HEADPHONES) {
-                    return true;
+                switch(device.getType()) {
+                    case AudioDeviceInfo.TYPE_WIRED_HEADSET:
+                    case AudioDeviceInfo.TYPE_WIRED_HEADPHONES:
+                    case AudioDeviceInfo.TYPE_BLUETOOTH_SCO:
+                    case AudioDeviceInfo.TYPE_BLUETOOTH_A2DP:
+                        return true;
                 }
             }
         }
