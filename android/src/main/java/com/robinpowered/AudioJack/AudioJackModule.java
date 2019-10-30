@@ -77,8 +77,6 @@ public class AudioJackModule extends ReactContextBaseJavaModule implements Lifec
                 switch(device.getType()) {
                     case AudioDeviceInfo.TYPE_WIRED_HEADSET:
                     case AudioDeviceInfo.TYPE_WIRED_HEADPHONES:
-                    case AudioDeviceInfo.TYPE_BLUETOOTH_SCO:
-                    case AudioDeviceInfo.TYPE_BLUETOOTH_A2DP:
                         return true;
                 }
             }
