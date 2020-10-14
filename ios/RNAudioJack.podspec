@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "RNAudioJack"
-  s.version      = "1.0.0"
+  s.version      = "1.1.1"
   s.summary      = "RNAudioJack"
   s.description  = <<-DESC
                   RNAudioJack
@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.author             = { "author" => "author@domain.cn" }
   s.platform     = :ios, "7.0"
   s.source       = { :git => "https://github.com/author/RNAudioJack.git", :tag => "master" }
-  s.source_files  = "RNAudioJack/**/*.{h,m}"
+  s.source_files  = "RNAudioJack.{h,m}"
   s.requires_arc = true
 
 
